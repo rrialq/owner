@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.aeonbits.owner.Config.DisableableFeature.PARAMETER_FORMATTING;
@@ -25,6 +26,7 @@ import static org.aeonbits.owner.Config.DisableableFeature.VARIABLE_EXPANSION;
 import static org.aeonbits.owner.Converters.convert;
 import static org.aeonbits.owner.PropertiesMapper.key;
 import static org.aeonbits.owner.Util.isFeatureDisabled;
+import static org.aeonbits.owner.Util.unsupported;
 
 /**
  * This {@link InvocationHandler} receives method calls from the delegate instantiated by {@link ConfigFactory} and maps
@@ -69,9 +71,33 @@ class PropertiesInvocationHandler implements InvocationHandler {
     private Object resolveProperty(Method method, Object... args) {
         String key = key(method);
         String value = properties.getProperty(key);
+        Class<?> returnType = method.getReturnType();
+        if (Config.class.isAssignableFrom(returnType))
+            return resolveNestedConfig(method, args);
         if (value == null)
             return null;
-        return convert(method, method.getReturnType(), format(method, expandVariables(method, value), args));
+        return convert(method, returnType, format(method, expandVariables(method, value), args));
+    }
+
+    private Object resolveNestedConfig(Method method, Object[] args) {
+
+        Map<?,?>[] imports = null;
+
+        if (args == null || args.length < 1)
+            imports = new Map<?, ?>[0];
+        else if (args.length == 1 && args[0] != null && Map[].class.isAssignableFrom(args[0].getClass()))
+            imports = (Map<?,?>[])args[0];
+        else {
+            imports = new Map<?, ?>[args.length];
+            try {
+                System.arraycopy(args, 0, imports, 0, args.length);
+            } catch (ArrayStoreException ex) {
+                throw unsupported(ex, "Unsupported args '%s' for method '%s'", Arrays.asList(args),
+                        method.toGenericString());
+            }
+        }
+
+        return ConfigFactory.create((Class<? extends Config>) method.getReturnType(), imports);
     }
 
     private String format(Method method, String format, Object... args) {
