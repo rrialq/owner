@@ -7,8 +7,8 @@ import org.aeonbits.owner.Config;
 
 /**
  * <p>Support class for custom named loaders, which expects the @Sources URI to be <code>owner://&lt;loadername&gt;#&lt;optional argument&gt;</code></p>
- * <p>the default spec for a {@link Loader} with a name of "myCustomLoader" and a {@link Config} <i>foo.bar.MyConfig</i> would become<br/>
- * <i>owner://myCustomLoader#foo/bar/MyConfig</i><br/>
+ * <p>the default spec for a {@link Loader} with a name of "myCustomLoader" and a {@link Config} <i>foo.bar.MyConfig</i> would become<br>
+ * <i>owner://myCustomLoader#foo/bar/MyConfig</i><br>
  * 
  * 
  * @author philippgaschuetz
