@@ -10,7 +10,7 @@ public abstract class AbstractFileBasedLoader implements Loader {
     private static final long serialVersionUID = -7207237322627631047L;
 
     public void load(Properties result, InputStream input) throws IOException {
-        result.load(input);
+        doLoadInternal(result, input);
     }
 	
     public void load(Properties result, URI uri) throws ConfigurationSourceNotFoundException {
