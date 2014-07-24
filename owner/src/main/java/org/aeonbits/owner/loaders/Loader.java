@@ -36,7 +36,7 @@ public interface Loader extends Serializable {
      * @since 1.0.5
      * @param result    the resulting properties where to load the {@link InputStream input}
      * @param input     the {@link InputStream} from where to load the properties.
-     * @throws java.io.ConfigurationSourceNotFoundException if the configuration file was not found.
+     * @throws ConfigurationSourceNotFoundException if the configuration file was not found.
      */
     void load(Properties result, URI input) throws ConfigurationSourceNotFoundException;
 
